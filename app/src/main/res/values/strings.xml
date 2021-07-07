@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Lifestyle Application</string>
+    <string name="txt_bible_verse">Bible verse</string>
+    <string name="txt_meal_plan">Meal plan</string>
+    <string name="txt_quote">Quote</string>
+    <string name="welcome_text">Welcome to LifeStyle App</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="no_account">Have no account? <u>Please sign up</u></string>
+    <string name="have_account">Have account? <u>Sign in</u></string>
+    <string name="nonvegan">Non-Vegan Meal Plan</string>
+    <string name="fullvegan">Full Vegan Meal Plan</string>
+    <string name="lactovegeterian">Lacto-Vegetarian Meal Plan</string>
+    <string name="ovovegetarian">Ovo-Vegetarian Meal Plan</string>
+    <string name="lactoovovegetarian">Lacto-Ovo Vegetarian Meal Plan</string>
+    <string name="pescatarian">Pescatarian Meal Plan</string>
+    <string name="body">Sets 3 Reps 12-15 Tempo 2010 Rest 60sec Lie on an incline bench holding</string>
+    <string name="meal">Tempeh bacon with saut\u00e9ed mushrooms, avocado, and wilted arugula.</string>
+    <string name="tea">teas with ingredients like licorice and slippery elm have throat-coating properties that help reduce irritation.</string>
+</resources>
