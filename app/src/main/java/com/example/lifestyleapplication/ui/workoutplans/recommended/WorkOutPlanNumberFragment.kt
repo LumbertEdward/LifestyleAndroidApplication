@@ -26,6 +26,7 @@ class WorkOutPlanNumberFragment : Fragment() {
     private lateinit var linearLayoutManager: LinearLayoutManager
     private lateinit var recommendedNumberAdapter: RecommendedNumberAdapter
     private lateinit var recommendedNumberInterface: RecommendedNumberInterface
+    private var type: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,8 +51,14 @@ class WorkOutPlanNumberFragment : Fragment() {
         recommendedNumberAdapter = RecommendedNumberAdapter(activity)
 
         setTitle()
+        setType()
         setData()
         return binding.root
+    }
+
+    private fun setType() {
+        val sharedPreferences: SharedPreferences = activity?.getSharedPreferences("WORKOUTTYPE", Context.MODE_PRIVATE)!!
+        type = sharedPreferences.getString("TYPE", "").toString()
     }
 
     private fun setTitle() {
@@ -62,10 +69,9 @@ class WorkOutPlanNumberFragment : Fragment() {
     private fun setData() {
         val sharedPreferences: SharedPreferences = activity?.getSharedPreferences("RECOMMENDED", Context.MODE_PRIVATE)!!
         val day = sharedPreferences.getString("DAY", "7").toString()
-        val section = sharedPreferences.getString("WORKOUTNUMBER", "").toString()
 
         recommendedNumberInterface = RecommendedNumberRetrofit.getRetrofit().create(RecommendedNumberInterface::class.java)
-        var call: Call<allworkoutnumbermodel> = recommendedNumberInterface.getNumbers(day, section)
+        var call: Call<allworkoutnumbermodel> = recommendedNumberInterface.getNumbers(day, type)
         call.enqueue(object : Callback<allworkoutnumbermodel>{
             override fun onResponse(
                 call: Call<allworkoutnumbermodel>,
