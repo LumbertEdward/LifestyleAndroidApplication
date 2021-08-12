@@ -1,33 +1,37 @@
 package com.example.lifestyleapplication.ui.workoutplans.customised
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.lifestyleapplication.R
+import com.example.lifestyleapplication.databinding.FragmentCustomisedWorkOutNameBinding
+import com.example.lifestyleapplication.ui.workoutplans.adapters.SelectedRecommendedWorkOutNumber
+import com.example.lifestyleapplication.ui.workoutplans.interfaces.SelectedRecommendedWorkOutNumberInterface
+import com.example.lifestyleapplication.ui.workoutplans.model.allworkoutmodel
+import com.example.lifestyleapplication.ui.workoutplans.model.workoutmodel
+import com.example.lifestyleapplication.ui.workoutplans.retrofitclasses.SelectedRecommendedWorkOutNumberRetrofit
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [CustomisedWorkOutName.newInstance] factory method to
- * create an instance of this fragment.
- */
 class CustomisedWorkOutName : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var binding: FragmentCustomisedWorkOutNameBinding
+    private lateinit var linearLayoutManager: LinearLayoutManager
+    private lateinit var selectedRecommendedWorkOutNumberInterface: SelectedRecommendedWorkOutNumberInterface
+    private lateinit var selectedRecommendedWorkOutNumber: SelectedRecommendedWorkOutNumber
+    private var setn: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+        val sharedPreferences: SharedPreferences = activity?.getSharedPreferences("WORKOUTTYPE", Context.MODE_PRIVATE)!!
+        setn = sharedPreferences.getString("TYPE", "").toString()
+
     }
 
     override fun onCreateView(
@@ -35,26 +39,55 @@ class CustomisedWorkOutName : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_customised_work_out_name, container, false)
+        binding = FragmentCustomisedWorkOutNameBinding.inflate(inflater, container, false)
+        var activity = activity as Context
+        linearLayoutManager = LinearLayoutManager(activity)
+        selectedRecommendedWorkOutNumber = SelectedRecommendedWorkOutNumber(activity)
+        binding.planProgress.visibility = View.VISIBLE
+        binding.recyclerNumber.visibility = View.GONE
+        setTitleAndImage()
+        getData()
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CustomisedWorkOutName.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CustomisedWorkOutName().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private fun getData() {
+        val sharedPreferences: SharedPreferences = activity?.getSharedPreferences("RECOMMENDED", Context.MODE_PRIVATE)!!
+        val day: String = sharedPreferences.getString("DAY", "").toString()
+        val number: String = sharedPreferences.getString("WORKOUTNUMBER", "").toString()
+
+        selectedRecommendedWorkOutNumberInterface = SelectedRecommendedWorkOutNumberRetrofit.getRetrofit().create(SelectedRecommendedWorkOutNumberInterface::class.java)
+        var call: Call<allworkoutmodel> = selectedRecommendedWorkOutNumberInterface.getNumbers(day, number, setn)
+        call.enqueue(object : Callback<allworkoutmodel> {
+            override fun onResponse(
+                call: Call<allworkoutmodel>,
+                response: Response<allworkoutmodel>
+            ) {
+                if (response.isSuccessful){
+                    getOutput(response.body()!!.data)
                 }
             }
+
+            override fun onFailure(call: Call<allworkoutmodel>, t: Throwable) {
+                Toast.makeText(activity, "Error", Toast.LENGTH_LONG).show()
+            }
+        })
+
     }
+
+    private fun getOutput(data: ArrayList<workoutmodel>) {
+        binding.planProgress.visibility = View.GONE
+        binding.recyclerNumber.visibility = View.VISIBLE
+        selectedRecommendedWorkOutNumber.getData(data)
+        binding.recyclerNumber.adapter = selectedRecommendedWorkOutNumber
+        binding.recyclerNumber.layoutManager = linearLayoutManager
+    }
+
+    private fun setTitleAndImage() {
+        val sharedPreferences: SharedPreferences = activity?.getSharedPreferences("RECOMMENDED", Context.MODE_PRIVATE)!!
+        val title: String = sharedPreferences.getString("WORKOUTNUMBER", "").toString()
+        val img: String = sharedPreferences.getString("WORKOUTIMAGE", "").toString()
+        binding.centerName.text = title
+
+    }
+
 }

@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.lifestyleapplication.R
+import com.example.lifestyleapplication.ui.constants.constants
 import com.example.lifestyleapplication.ui.interfaces.generalinterface
 import com.example.lifestyleapplication.ui.models.day
 import com.example.lifestyleapplication.ui.workoutplans.model.plandaysmodel
@@ -27,7 +28,7 @@ open class RecommendedDaysAdapter(val context: Context): RecyclerView.Adapter<Re
         myViewHolder.dy.text = days[position].day
         val picasso: Picasso.Builder = Picasso.Builder(context)
         picasso.downloader(OkHttp3Downloader(context))
-        picasso.build().load(days[position].image).into(myViewHolder.img)
+        picasso.build().load(constants.DEVOTIONALS + days[position].image).into(myViewHolder.img)
         myViewHolder.card.setOnClickListener {
             general.sendDay(days[position].day.toString())
         }

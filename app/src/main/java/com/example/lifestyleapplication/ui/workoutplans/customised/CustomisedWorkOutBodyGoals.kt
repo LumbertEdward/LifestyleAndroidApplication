@@ -1,33 +1,25 @@
 package com.example.lifestyleapplication.ui.workoutplans.customised
 
+import android.content.Context
+import android.content.SharedPreferences
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import com.example.lifestyleapplication.R
+import com.example.lifestyleapplication.databinding.FragmentCustomisedWorkOutBodyGoalsBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [CustomisedWorkOutBodyGoals.newInstance] factory method to
- * create an instance of this fragment.
- */
 class CustomisedWorkOutBodyGoals : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var binding: FragmentCustomisedWorkOutBodyGoalsBinding
+    private var gain: String? = ""
+    private var lose: String? = ""
+    private var maintain: String? = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+
     }
 
     override fun onCreateView(
@@ -35,26 +27,43 @@ class CustomisedWorkOutBodyGoals : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_customised_work_out_body_goals, container, false)
+        binding = FragmentCustomisedWorkOutBodyGoalsBinding.inflate(inflater, container, false)
+        binding.floatingBodyGoals.setOnClickListener {
+            val plan: String = arguments?.getString("MEALPLAN").toString()
+            val age: String = arguments?.getString("AGE").toString()
+            val gender: String = arguments?.getString("GENDER").toString()
+            val weight: String = arguments?.getString("WEIGHT").toString()
+            val height = arguments?.getString("HEIGHT").toString()
+            val type = arguments?.getString("BODYTYPE").toString()
+            if (binding.optOne.isChecked){
+                lose = binding.optOne.text.toString()
+            }
+            if (binding.optTwo.isChecked){
+                gain = binding.optTwo.text.toString()
+            }
+            if (binding.optThree.isChecked){
+                maintain = binding.optThree.text.toString()
+            }
+
+            val sharedPreferencesGend: SharedPreferences = activity?.getSharedPreferences("CUSTOMIZEDWORKOUT", Context.MODE_PRIVATE)!!
+            val edt: SharedPreferences.Editor = sharedPreferencesGend.edit()
+            edt.putString("LOSE", lose)
+            edt.putString("GAIN", gain)
+            edt.putString("MAINTAIN", maintain)
+            edt.apply()
+            findNavController().navigate(R.id.action_customisedWorkOutBodyGoals_to_customisedWorkOutDisability)
+        }
+        setUsername()
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CustomisedWorkOutBodyGoals.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CustomisedWorkOutBodyGoals().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+    private fun setUsername() {
+        val sharedPreferences = activity?.getSharedPreferences("USER", Context.MODE_PRIVATE)!!
+        val username = sharedPreferences.getString("USERNAME", "")
+        if (username != null){
+            binding.introBodyGoals.text = "What are your body goals " + username.toString() + "?"
+        }
+
     }
+
 }

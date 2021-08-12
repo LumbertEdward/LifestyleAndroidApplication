@@ -42,6 +42,9 @@ class MealPlanCategoriesFragment : Fragment() {
             general.goToMealDaysSpecial(arguments?.getString("PLAN").toString())
         }
         binding.txtMealCategory.text = arguments?.getString("PLAN")
+        binding.imgAddMeal.setOnClickListener {
+            findNavController().navigate(R.id.addMealPlanFragment)
+        }
         return binding.root
     }
 

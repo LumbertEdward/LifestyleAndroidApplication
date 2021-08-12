@@ -34,8 +34,12 @@ class WorkOutPlanCategories : Fragment() {
             findNavController().navigate(R.id.action_workOutPlanCategories_to_workOutPlanFragment)
         }
 
-        binding.relCustomWorkOut.setOnClickListener {
+        binding.imgAddWorkOut.setOnClickListener {
+            findNavController().navigate(R.id.addWorkOutPlan)
+        }
 
+        binding.relCustomWorkOut.setOnClickListener {
+            findNavController().navigate(R.id.action_workOutPlanCategories_to_customisedWorkOutAge)
         }
 
         binding.relRecommendedWorkOut.setOnClickListener {

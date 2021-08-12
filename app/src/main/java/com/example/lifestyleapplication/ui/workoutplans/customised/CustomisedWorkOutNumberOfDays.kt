@@ -1,33 +1,33 @@
 package com.example.lifestyleapplication.ui.workoutplans.customised
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.lifestyleapplication.R
+import com.example.lifestyleapplication.databinding.FragmentCustomisedWorkOutNumberOfDaysBinding
+import com.example.lifestyleapplication.ui.workoutplans.adapters.RecommendedDaysAdapter
+import com.example.lifestyleapplication.ui.workoutplans.interfaces.RecommendedDaysInterface
+import com.example.lifestyleapplication.ui.workoutplans.model.allplandaysmodel
+import com.example.lifestyleapplication.ui.workoutplans.model.plandaysmodel
+import com.example.lifestyleapplication.ui.workoutplans.retrofitclasses.RecommendedDaysRetrofit
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [CustomisedWorkOutNumberOfDays.newInstance] factory method to
- * create an instance of this fragment.
- */
 class CustomisedWorkOutNumberOfDays : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private lateinit var binding: FragmentCustomisedWorkOutNumberOfDaysBinding
+    private lateinit var recommendedDaysInterface: RecommendedDaysInterface
+    private lateinit var linearLayoutManager: LinearLayoutManager
+    private lateinit var recommendedDaysAdapter: RecommendedDaysAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+
     }
 
     override fun onCreateView(
@@ -35,30 +35,45 @@ class CustomisedWorkOutNumberOfDays : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(
-            R.layout.fragment_customised_work_out_number_of_days,
-            container,
-            false
-        )
+        binding = FragmentCustomisedWorkOutNumberOfDaysBinding.inflate(inflater, container, false)
+        binding.progressWork.visibility = View.VISIBLE
+        binding.recyclerWorkOutDays.visibility = View.GONE
+
+        linearLayoutManager = LinearLayoutManager(activity)
+        val activity = activity as Context
+        recommendedDaysAdapter = RecommendedDaysAdapter(activity)
+        getAllDays()
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment CustomisedWorkOutNumberOfDays.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            CustomisedWorkOutNumberOfDays().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    private fun getAllDays() {
+        recommendedDaysInterface = RecommendedDaysRetrofit.getRetrofit().create(RecommendedDaysInterface::class.java)
+        val call: Call<allplandaysmodel> = recommendedDaysInterface.getDays("7")
+        call.enqueue(object : Callback<allplandaysmodel> {
+            override fun onResponse(
+                call: Call<allplandaysmodel>,
+                response: Response<allplandaysmodel>
+            ) {
+                if (response.isSuccessful) {
+                    binding.progressWork.visibility = View.GONE
+                    binding.recyclerWorkOutDays.visibility = View.VISIBLE
+                    sendData(response.body()!!.data)
                 }
             }
+
+            override fun onFailure(call: Call<allplandaysmodel>, t: Throwable) {
+                binding.progressWork.visibility = View.VISIBLE
+                binding.recyclerWorkOutDays.visibility = View.GONE
+                Toast.makeText(activity, "Error", Toast.LENGTH_LONG).show()
+            }
+
+        })
     }
+
+    private fun sendData(data: ArrayList<plandaysmodel>) {
+        recommendedDaysAdapter.getDays(data)
+        binding.recyclerWorkOutDays.adapter = recommendedDaysAdapter
+        binding.recyclerWorkOutDays.layoutManager = linearLayoutManager
+    }
+
 }

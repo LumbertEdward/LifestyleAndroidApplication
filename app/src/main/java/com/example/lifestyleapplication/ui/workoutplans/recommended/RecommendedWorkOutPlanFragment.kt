@@ -30,6 +30,8 @@ class RecommendedWorkOutPlanFragment : Fragment() {
     private var setn: String = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val sharedPreferences: SharedPreferences = activity?.getSharedPreferences("WORKOUTTYPE", Context.MODE_PRIVATE)!!
+        setn = sharedPreferences.getString("TYPE", "").toString()
 
     }
 
@@ -42,15 +44,11 @@ class RecommendedWorkOutPlanFragment : Fragment() {
         var activity = activity as Context
         linearLayoutManager = LinearLayoutManager(activity)
         selectedRecommendedWorkOutNumber = SelectedRecommendedWorkOutNumber(activity)
+        binding.planProgress.visibility = View.VISIBLE
+        binding.recyclerNumber.visibility = View.GONE
         setTitleAndImage()
         getData()
-        setDay()
         return binding.root
-    }
-
-    private fun setDay() {
-        val sharedPreferences: SharedPreferences = activity?.getSharedPreferences("WORKOUTTYPE", Context.MODE_PRIVATE)!!
-        setn = sharedPreferences.getString("TYPE", "").toString()
     }
 
     private fun getData() {
@@ -78,6 +76,8 @@ class RecommendedWorkOutPlanFragment : Fragment() {
     }
 
     private fun getOutput(data: ArrayList<workoutmodel>) {
+        binding.planProgress.visibility = View.GONE
+        binding.recyclerNumber.visibility = View.VISIBLE
         selectedRecommendedWorkOutNumber.getData(data)
         binding.recyclerNumber.adapter = selectedRecommendedWorkOutNumber
         binding.recyclerNumber.layoutManager = linearLayoutManager
@@ -87,11 +87,7 @@ class RecommendedWorkOutPlanFragment : Fragment() {
         val sharedPreferences: SharedPreferences = activity?.getSharedPreferences("RECOMMENDED", Context.MODE_PRIVATE)!!
         val title: String = sharedPreferences.getString("WORKOUTNUMBER", "").toString()
         val img: String = sharedPreferences.getString("WORKOUTIMAGE", "").toString()
-        binding.txtHead.text = title
+        binding.centerName.text = title
 
-        val activity = activity as Context
-        val picasso: Picasso.Builder = Picasso.Builder(activity)
-        picasso.downloader(OkHttp3Downloader(activity))
-        picasso.build().load(img).into(binding.imgColl)
     }
 }

@@ -7,6 +7,6 @@ class constants {
     companion object{
         const val AUTHORS_BASE_URL = "https://poetrydb.org/"
         const val QUOTE_BASE_URL = "https://favqs.com/api/"
-        const val DEVOTIONALS = "https://1ee09663aebe.ngrok.io/"
+        const val DEVOTIONALS = "https://9625564950f8.ngrok.io/"
     }
 }

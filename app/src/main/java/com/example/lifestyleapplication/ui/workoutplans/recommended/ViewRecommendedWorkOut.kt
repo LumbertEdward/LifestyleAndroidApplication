@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.example.lifestyleapplication.R
 import com.example.lifestyleapplication.databinding.FragmentViewRecommendedWorkOutBinding
+import com.example.lifestyleapplication.ui.constants.constants
 import com.example.lifestyleapplication.ui.workoutplans.model.workoutmodel
 import com.squareup.picasso.OkHttp3Downloader
 import com.squareup.picasso.Picasso
@@ -45,6 +46,6 @@ class ViewRecommendedWorkOut : Fragment() {
         val activity = activity as Context
         val picasso: Picasso.Builder = Picasso.Builder(activity)
         picasso.downloader(OkHttp3Downloader(activity))
-        picasso.build().load(img).into(binding.imgExercise)
+        picasso.build().load(constants.DEVOTIONALS + img).into(binding.imgExercise)
     }
 }

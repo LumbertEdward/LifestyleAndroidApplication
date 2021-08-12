@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.lifestyleapplication.R
+import com.example.lifestyleapplication.ui.constants.constants
 import com.example.lifestyleapplication.ui.interfaces.generalinterface
 import com.example.lifestyleapplication.ui.workoutplans.model.workoutnumbermodel
 import com.squareup.picasso.OkHttp3Downloader
@@ -26,7 +27,7 @@ open class RecommendedNumberAdapter(val context: Context): RecyclerView.Adapter<
         myViewHolder.title.text = numb[position].workoutnumber + ": " + numb[position].workoutbodypart
         var picasso: Picasso.Builder = Picasso.Builder(context)
         picasso.downloader(OkHttp3Downloader(context))
-        picasso.build().load(numb[position].img).into(myViewHolder.img)
+        picasso.build().load(constants.DEVOTIONALS + numb[position].img).into(myViewHolder.img)
         myViewHolder.card.setOnClickListener {
             general.sendWorkOutNumber(numb[position].workoutnumber!!, numb[position].img!!)
         }
